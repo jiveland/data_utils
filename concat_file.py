@@ -12,4 +12,5 @@ df = pd.DataFrame()
 for f in files:
     data = pd.read_excel(f)
     df = df.append(data)
-df.head(30)
+df.head(20)
+ 
