@@ -10,13 +10,21 @@ print(dev_list)
 
 dfout=pd.DataFrame()
 dfout2 = pd.DataFrame()
+col_list =[]
 
+#list of interpolated times
 time = [1.5,2.5]
-# addrow= {}
+#list of interpolated col and their subtractions
 data_list =['Data', 'Data Two']
 sub_list = ['Data Sub','Data Two Sub']
 
-# interpolation 
+#if there are other cols in the df we need to ffill with thier previous value 
+for col in df.columns:
+    col_list.append(col)
+for col in data_list:
+    col_list.remove(col)
+
+# interpolation==================================================================
 for d in dev:
     addrow_list = []
     for t in time:
@@ -32,15 +40,19 @@ for d in dev:
     add = dfin.append(addrow_list, ignore_index=True)
     
     dfout = dfout.append(add)
-print(dfout.head(45))
 
-#subtraction of 0 values
+#subtraction of min (0) values===========================================================
 data_list = []
 for d in dev:
     dfin2 = dfout.loc[(dfout['Device']==d)].copy()
     new_list=[]
     for data,sub in zip(data_list,sub_list):
         dfin2[sub] = dfin2[data]-dfin2.loc[dfin.Time.idxmin(),data]
+    #ffill missing data 
+    for col in col_list:
+        dfin2[col]=dfin2[col].ffill()
+    
+    
     dfout2=dfout2.append(dfin2)
     
 print(dfout2.head(20))
